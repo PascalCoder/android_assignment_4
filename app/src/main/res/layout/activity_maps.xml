@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity">
+
+    &lt;!&ndash;<android.support.v7.widget.Toolbar>
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PARKING APP"/>
+    </android.support.v7.widget.Toolbar>&ndash;&gt;
+</fragment>-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_weight="1"> <!-- android:background="#00000000" -->
+
+    <!--<android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationZ="8dp"
+        android:background="@color/colorCyan">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PARKING APP"
+            android:textColor="@color/colorWhite"
+            android:textAlignment="center"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+    </android.support.v7.widget.Toolbar>-->
+
+    <!--<SlidingDrawer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></SlidingDrawer>-->
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:translationZ="2dp"> <!-- android:background="#00FFFFFF" -->
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.025"
+            android:background="#005500"
+            android:visibility="invisible"
+            android:translationZ="-1dp"/>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.95" ><!-- android:layout_weight="0.95" -->
+
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/sliding_panel" />
+        </RelativeLayout>
+         <!-- activity_maps -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.025"
+            android:visibility="invisible"
+            android:background="@null"
+            android:translationZ="-1dp" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:minHeight="35dp"
+        android:minWidth="35dp"
+        android:padding="5dp"
+        android:layout_marginTop="-10dp"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:background="@drawable/circle"
+        android:src="@drawable/ic_search_24dp"
+        android:translationZ="3dp"
+        android:layout_below="@+id/ll_container"
+        app:layout_constraintTop_toBottomOf="@+id/ll_container"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        > <!-- android:translationZ="1dp" -->
+    </FrameLayout>
+
+</RelativeLayout>

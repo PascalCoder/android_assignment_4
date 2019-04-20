@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="250dp"
+    android:padding="16dp"
+    android:paddingTop="30dp"
+    android:paddingBottom="40dp"
+    android:translationZ="2dp"
+    android:background="@color/colorWhite"
+    android:elevation="5dp"
+    android:id="@+id/ll_sliding_panel">
+
+    <!--<android.support.v4.widget.DrawerLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </android.support.v4.widget.DrawerLayout>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_alignBottom="@id/et_location"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_location_on_24dp"/> <!-- android:layout_alignBottom="@id/et_location" android:baselineAlignBottom=""-->
+        <EditText
+            android:id="@+id/et_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_location"
+            android:layout_gravity="center_vertical"
+            android:hint="Location"/> <!-- android:layout_alignBottom="@id/iv_location" -->
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/iv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@id/et_date"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_date_range_24dp" />
+            <!-- android:layout_below="@+id/iv_location"-->
+            <EditText
+                android:id="@+id/et_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/iv_date"
+                android:layout_marginRight="5dp"
+                android:hint="Date" />
+        </RelativeLayout>
+        <!--  android:layout_below="@id/et_location" -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/iv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_access_time_24dp"
+                android:layout_alignBottom="@id/et_time"
+                android:layout_marginBottom="8dp"
+                /> <!-- android:layout_toRightOf="@id/et_date" -->
+            <EditText
+                android:id="@+id/et_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/iv_time"
+                android:hint="Time"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tv_reserved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/sb_time"
+            android:text="Reserved for:"/>
+        <TextView
+            android:id="@+id/tv_minute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 min"
+            android:textColor="#FF6464"
+            android:layout_marginStart="5dp"
+            android:layout_toRightOf="@+id/tv_reserved"/>
+        <TextView
+            android:id="@+id/tv_total_minute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="120 min"
+            android:layout_alignParentRight="true"
+            android:textAlignment="textEnd"
+            android:layout_toRightOf="@+id/tv_minute"/>
+        <SeekBar
+            android:id="@+id/sb_time"
+            android:layout_width="match_parent"
+            style="?android:attr/seekBarStyle"
+            android:layout_alignStart="@id/tv_reserved"
+            android:paddingTop="10px"
+            android:paddingBottom="10px"
+            android:paddingStart="20px"
+            android:paddingEnd="20px"
+            android:layout_marginTop="-15dp"
+            android:minHeight="60dip"
+            android:maxHeight="60dip"
+            android:layout_height="50dp"
+            android:layout_below="@id/tv_reserved"
+            /> <!-- android:background="@drawable/slider" -->
+    </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:elevation="5dp"
+            android:background="@color/colorSkyBlue"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:text="Search"
+            android:textAllCaps="false"/>
+
+</LinearLayout>
