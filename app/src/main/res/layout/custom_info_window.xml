@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorSkyBlue"
+    android:alpha="0.8"
+    android:paddingBottom="8dp"> <!-- app:cardBackgroundColor="@color/colorSkyBlue" app:cardCornerRadius="5dp"-->
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold"
+            android:paddingStart="10dp"
+            android:paddingTop="15dp"/>
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:paddingStart="10dp"
+            /> <!-- android:paddingTop="15dp" -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorWhite"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_spot_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Open Spots"
+                    android:textColor="@color/colorWhite"/>
+                <TextView
+                    android:id="@+id/tv_spot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_cost_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Cost"
+                    android:textColor="@color/colorWhite"/>
+                <TextView
+                    android:id="@+id/tv_cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_distance_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Distance"
+                    android:textColor="@color/colorWhite"/>
+                <TextView
+                    android:id="@+id/tv_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/colorWhite"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_pay_reserve"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pay and Reserve"
+            android:textAllCaps="false"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorSkyBlue"
+            android:background="@color/colorWhite"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:height="50dp"/>
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="More"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorWhite"
+            android:paddingBottom="8dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

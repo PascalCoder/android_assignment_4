@@ -3,7 +3,7 @@ package com.example.assignment_4;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ParkingPojo {
+public class ParkingPojo extends ParkingExtras{
 
     @SerializedName("id")
     @Expose

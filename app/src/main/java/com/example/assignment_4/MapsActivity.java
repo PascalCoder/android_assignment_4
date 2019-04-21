@@ -9,6 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -43,7 +46,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +59,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback { //FragmentActivity
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener { //FragmentActivity
 
     private static String TAG = MapsActivity.class.getSimpleName();
     public static final float INITIAL_ZOOM = 12f;
@@ -177,14 +182,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if(!hiddenToolbar){
-                    linearLayout.setBackgroundColor(Color.GREEN);
+                    //linearLayout.setBackgroundColor(Color.GREEN);
                     //linearLayout.startAnimation(slideUp);
                     //v.startAnimation(slideUp);
                     //v.animate().translationY(v.getHeight());
                     slideUp(linearLayout);
                     slideUp(ivSearch);
-                    Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(MapsActivity.this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();
+                    /*Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();*/
                     hiddenToolbar = true;
                     Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
                 }else if(v.getVisibility() == View.INVISIBLE){
@@ -193,7 +198,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
                 else{
-                    linearLayout.setBackgroundColor(Color.BLUE);
+                    //linearLayout.setBackgroundColor(Color.BLUE);
                     //linearLayout.startAnimation(slideDown);
                     //v.startAnimation(slideDown);
                     slideDown(linearLayout);
@@ -247,14 +252,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap){
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         LatLng office = new LatLng(33.756898,-84.392066);
         mMap.addMarker(new MarkerOptions().position(office).title("Centennial Tower"));
-        createParkingMarkers(mMap); //creating the markers for the parkings
+
+        try{
+            createParkingMarkers(mMap); //creating the markers for the parkings
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(office, INITIAL_ZOOM));
 
         setMapLongClick(mMap);
@@ -369,21 +380,125 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    public void createParkingMarkers(GoogleMap map){
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
+
+        private final View contentView;
+        ParkingPojo parkingPojo;
+
+        CustomInfoWindowAdapter(){ //ParkingPojo parkingPojo
+            //this.parkingPojo = parkingPojo;
+            contentView = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+
+        }
+
+        public void setInfoForParking(Marker marker){
+
+            TextView tvName = contentView.findViewById(R.id.tv_name);
+            tvName.setText(marker.getTitle());
+
+            String snippet = marker.getSnippet();
+            String[] snippetArray = new String[4];
+            if(snippet != null) { // || !snippet.equals("")
+                snippetArray = snippet.split("-");
+            }else{
+                snippet = "";
+            }
+
+            String addressLine = snippetArray[0];
+            TextView tvAddress = contentView.findViewById(R.id.tv_address);
+            tvAddress.setText(addressLine);
+
+            TextView tvSpot = contentView.findViewById(R.id.tv_spot);
+            tvSpot.setText(snippetArray[1]); //"" + parkingPojo.openSpot
+
+            TextView tvCost = contentView.findViewById(R.id.tv_cost);
+            tvCost.setText(snippetArray[2] + "/min"); //parkingPojo.getCostPerMinute()
+
+            double distance = 0;
+            if(snippetArray[3] != null) distance = Double.parseDouble(snippetArray[3]);
+            TextView tvDistance = contentView.findViewById(R.id.tv_distance);
+            tvDistance.setText(new DecimalFormat("##.##").format(distance) + " miles"); //distanceInMiles
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            setInfoForParking(marker);
+
+            return contentView;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            //setInfoForParking(marker);
+
+            return null;
+        }
+    }
+
+    public double getDistance(LatLng position, ParkingPojo parkingPojo){
+        position = new LatLng(33.756898,-84.392066);
+        Location location = new Location("");
+        location.setLatitude(position.latitude);
+        location.setLongitude(position.longitude);
+
+        Location parkingLocation = new Location("");
+        parkingLocation.setLatitude(Double.parseDouble(parkingPojo.getLat()));
+        parkingLocation.setLongitude(Double.parseDouble(parkingPojo.getLng()));
+
+        float distanceInMeters = location.distanceTo(parkingLocation);
+        double distanceInMiles = 0.000621371f*distanceInMeters;
+
+        return distanceInMiles;
+    }
+
+    public void createParkingMarkers(GoogleMap map) throws Exception{
 
         for(int i = 0; i < parkingPojoList.size(); i++){
 
+            ParkingPojo parkingPojo = parkingPojoList.get(i);
+
             LatLng parking = new LatLng(Double.parseDouble(parkingPojoList.get(i).getLat()),
                                         Double.parseDouble(parkingPojoList.get(i).getLng()));
-            String snippet = "Lat: " + parking.latitude + ", Lng: " + parking.longitude;
+            Address parkingAddress = getParkingAddress(parkingPojo);
+            String snippet = "" + parkingAddress.getAddressLine(0) + "-" +
+                                parkingPojoList.get(i).openSpot + "-" +
+                                parkingPojoList.get(i).getCostPerMinute() + "-" +
+                                getDistance(new LatLng(33.756898,-84.392066), parkingPojoList.get(i));
+                            //+ "\n" + "Cost: " + parkingPojoList.get(i).getCostPerMinute(); //"Lat: " + parking.latitude + ", Lng: " + parking.longitude
             Marker marker = map.addMarker(new MarkerOptions()
                                             .position(parking)
-                                            .title(parkingPojoList.get(i).getName())
+                                            .title(parkingPojo.getName())
                                             .icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
                                             .snippet(snippet));
-
+            if(snippet != null){
+                map.setInfoWindowAdapter(new CustomInfoWindowAdapter()); //parkingPojoList.get(i)
+            }
 
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+        Toast.makeText(this, "Marker was clicked", Toast.LENGTH_SHORT).show();
+
+        return true;
+    }
+
+
+    public Address getParkingAddress(ParkingPojo parkingPojo){
+        Geocoder geocoder;
+        List<Address> addresses = new ArrayList<>();
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try{
+            addresses = geocoder.getFromLocation(Double.parseDouble(parkingPojo.getLat()),
+                    Double.parseDouble(parkingPojo.getLng()), 1);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return addresses.get(0);
     }
 
     public Bitmap createBitmap(Context context, int drawableId){
