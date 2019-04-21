@@ -5,6 +5,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ParkingPojo {
 
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+
     @SerializedName("lat")
     @Expose
     private String lat;
@@ -29,6 +33,14 @@ public class ParkingPojo {
     @SerializedName("reserved_until")
     @Expose
     private String reservedUntil;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getLat() {
         return lat;

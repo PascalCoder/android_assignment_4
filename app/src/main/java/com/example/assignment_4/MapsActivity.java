@@ -3,13 +3,18 @@ package com.example.assignment_4;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,13 +37,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.StreetViewPanoramaOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback { //FragmentActivity
 
@@ -61,10 +75,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     boolean hiddenToolbar = false;
 
+    public ParkingApi parkingApi;
+    public Parkings parkings;
+    public static List<ParkingPojo> parkingPojoList = new ArrayList<>();
+
+    Bitmap markerIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps); //activity_mapssliding_panel
+
+        initializeRetrofit();
+        getParkings();
+
+        markerIcon = createBitmap(this, R.drawable.ic_radio_button_checked_blue_24dp);
+
+        //parkingPojoList = new ArrayList<>();
+        //parkingPojoList = parkings.parkingList;
+        /*for(int i = 0; i < 10; i++){
+            String name = parkingPojoList.get(i).getName();
+            int number = parkingPojoList.get(i).getMaxReserveTimeMins();
+            String minuteCharge = parkingPojoList.get(i).getCostPerMinute();
+        }*/
+
+        Toast.makeText(this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();
 
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -149,6 +184,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     slideUp(linearLayout);
                     slideUp(ivSearch);
                     Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();
                     hiddenToolbar = true;
                     Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
                 }else if(v.getVisibility() == View.INVISIBLE){
@@ -183,7 +219,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                                             0,
                                                             -distance + 30);
         animate.setDuration(1000);
-        animate.setFillAfter(false);
+        animate.setFillAfter(true);
         view.startAnimation(animate);
     }
 
@@ -218,6 +254,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng sydney = new LatLng(-34, 151);
         LatLng office = new LatLng(33.756898,-84.392066);
         mMap.addMarker(new MarkerOptions().position(office).title("Centennial Tower"));
+        createParkingMarkers(mMap); //creating the markers for the parkings
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(office, INITIAL_ZOOM));
 
         setMapLongClick(mMap);
@@ -226,6 +263,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         enableMyLocation();
 
         setInfoWindowClickToPanorama(mMap);
+
     }
 
     private void setMapLongClick(final GoogleMap map) {
@@ -305,6 +343,64 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 });
+    }
+
+    public void initializeRetrofit(){
+        Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("http://ridecellparking.herokuapp.com/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+        parkingApi = retrofit.create(ParkingApi.class);
+    }
+
+    public void getParkings(){
+        parkingApi.getParking().enqueue(new Callback<List<ParkingPojo>>() {
+            @Override
+            public void onResponse(Call<List<ParkingPojo>> call, Response<List<ParkingPojo>> response) {
+                parkingPojoList = new ArrayList<>(response.body());
+                Toast.makeText(MapsActivity.this, "Size: " + response.body().size(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<ParkingPojo>> call, Throwable t) {
+                Toast.makeText(MapsActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void createParkingMarkers(GoogleMap map){
+
+        for(int i = 0; i < parkingPojoList.size(); i++){
+
+            LatLng parking = new LatLng(Double.parseDouble(parkingPojoList.get(i).getLat()),
+                                        Double.parseDouble(parkingPojoList.get(i).getLng()));
+            String snippet = "Lat: " + parking.latitude + ", Lng: " + parking.longitude;
+            Marker marker = map.addMarker(new MarkerOptions()
+                                            .position(parking)
+                                            .title(parkingPojoList.get(i).getName())
+                                            .icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
+                                            .snippet(snippet));
+
+
+        }
+    }
+
+    public Bitmap createBitmap(Context context, int drawableId){
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
 }
