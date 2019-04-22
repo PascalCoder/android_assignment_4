@@ -6,5 +6,9 @@
     <string name="hybrid_map">Hybrid Map</string>
     <string name="satellite_map">Satellite Map</string>
     <string name="terrain_map">Terrain Map</string>
-    <string name="title_activity_maps_2">Parking Spot Info</string> <!-- Map -->
+    <string name="title_activity_maps_2">Parking Spot Info</string>
+    <string name="max_time">120 min</string>
+    <string name="pay_to_reserve">Pay to Reserve</string>
+    <string name="pay_and_reserve">Pay and Reserve</string>
+    <string name="reserverd_for">Reserverd for:</string> <!-- Map -->
 </resources>

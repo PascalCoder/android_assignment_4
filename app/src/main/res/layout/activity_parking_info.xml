@@ -3,26 +3,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_weight="1"> <!-- android:background="#00000000" -->
+    android:layout_weight="1">
 
-    <!--<android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:translationZ="8dp"
-        android:background="@color/colorCyan">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PARKING APP"
-            android:textColor="@color/colorWhite"
-            android:textAlignment="center"
-            android:textSize="18dp"
-            android:textStyle="bold"/>
-    </android.support.v7.widget.Toolbar>-->
-
-    <!--<SlidingDrawer
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></SlidingDrawer>-->
     <LinearLayout
         android:id="@+id/ll_container_info"
         android:layout_width="match_parent"
@@ -59,6 +41,7 @@
 
     <!-- Info start -->
     <LinearLayout
+        android:id="@+id/ll_parking_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -157,9 +140,123 @@
         </LinearLayout>
 
     </LinearLayout>
-
-
     <!-- Info end -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_parking_info"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/iv_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_date_range_24dp"
+                    android:layout_alignBottom="@+id/et_date_info"
+                    android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/et_date_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_picker"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/iv_clock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_access_time_24dp"
+                    android:layout_alignBottom="@+id/et_time_info"
+                    android:layout_marginBottom="8dp"/>
+                <EditText
+                    android:id="@+id/et_time_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/iv_clock"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_weight="0.8">
+
+                <TextView
+                    android:id="@+id/tv_reserved_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reserverd_for" />
+                <TextView
+                    android:id="@+id/tv_minute_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tv_reserved_info"
+                    android:textColor="@color/colorAccent"
+                    android:text=" 0 min"/>
+                <TextView
+                    android:id="@+id/tv_total_minute_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/tv_minute_info"
+                    android:layout_alignParentEnd="true"
+                    android:text="@string/max_time"
+                    android:textAlignment="textEnd"/>
+                <SeekBar
+                    android:id="@+id/sb_time_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_reserved_info"/>
+                <TextView
+                    android:id="@+id/tv_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:layout_below="@+id/sb_time_info"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_pay_reserve_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/rouded_corners_blue"
+            android:textColor="@color/colorWhite"
+            android:text="@string/pay_to_reserve"
+            android:textAllCaps="false"
+            android:textSize="18dp"
+            android:height="40dp"/>
+
+    </LinearLayout>
     <!--  bottom nav start-->
     <LinearLayout
         android:layout_width="match_parent"

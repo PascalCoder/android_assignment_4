@@ -109,7 +109,7 @@
             android:id="@+id/btn_pay_reserve"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pay and Reserve"
+            android:text="@string/pay_and_reserve"
             android:textAllCaps="false"
             android:textSize="18dp"
             android:layout_gravity="center_horizontal"
