@@ -1,9 +1,12 @@
 package com.example.assignment_4;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ParkingPojo extends ParkingExtras{
+public class ParkingPojo extends ParkingExtras implements Parcelable{
 
     @SerializedName("id")
     @Expose
@@ -33,6 +36,43 @@ public class ParkingPojo extends ParkingExtras{
     @SerializedName("reserved_until")
     @Expose
     private String reservedUntil;
+
+    protected ParkingPojo(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        lat = in.readString();
+        lng = in.readString();
+        name = in.readString();
+        costPerMinute = in.readString();
+        if (in.readByte() == 0) {
+            maxReserveTimeMins = null;
+        } else {
+            maxReserveTimeMins = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            minReserveTimeMins = null;
+        } else {
+            minReserveTimeMins = in.readInt();
+        }
+        byte tmpIsReserved = in.readByte();
+        isReserved = tmpIsReserved == 0 ? null : tmpIsReserved == 1;
+        reservedUntil = in.readString();
+    }
+
+    public static final Creator<ParkingPojo> CREATOR = new Creator<ParkingPojo>() {
+        @Override
+        public ParkingPojo createFromParcel(Parcel in) {
+            return new ParkingPojo(in);
+        }
+
+        @Override
+        public ParkingPojo[] newArray(int size) {
+            return new ParkingPojo[size];
+        }
+    };
 
     public Integer getId() {
         return id;
@@ -104,5 +144,50 @@ public class ParkingPojo extends ParkingExtras{
 
     public void setReservedUntil(String reservedUntil) {
         this.reservedUntil = reservedUntil;
+    }
+
+    @Override
+    public String toString() {
+        return "ParkingPojo{" +
+                "name='" + name + '\'' +
+                ", costPerMinute='" + costPerMinute + '\'' +
+                ", address=" + address +
+                ", openSpot=" + openSpot +
+                ", distance='" + distance + '\'' +
+                '}';
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(id);
+        }
+        dest.writeString(lat);
+        dest.writeString(lng);
+        dest.writeString(name);
+        dest.writeString(costPerMinute);
+        if (maxReserveTimeMins == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(maxReserveTimeMins);
+        }
+        if (minReserveTimeMins == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(minReserveTimeMins);
+        }
+        dest.writeByte((byte) (isReserved == null ? 0 : isReserved ? 1 : 2));
+        dest.writeString(reservedUntil);
     }
 }

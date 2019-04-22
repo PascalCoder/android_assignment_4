@@ -4,8 +4,10 @@ import android.location.Address;
 
 public class ParkingExtras {
 
-    protected Address address;
-    protected int openSpot = 5;
+    public Address address;
+    public String simpleAddress;
+    public int openSpot = 5;
+    public String distance;
 
     public Address getAddress() {
         return address;
@@ -15,6 +17,10 @@ public class ParkingExtras {
         this.address = address;
     }
 
+    public String getSimpleAddress() { return simpleAddress; }
+
+    public void setSimpleAddress(String simpleAddress) { this.simpleAddress = simpleAddress; }
+
     public int getOpenSpot() {
         return openSpot;
     }
@@ -22,4 +28,8 @@ public class ParkingExtras {
     public void setOpenSpot(int openSpot) {
         this.openSpot = openSpot;
     }
+
+    public String getDistance() { return distance; }
+
+    public void setDistance(String distance) { this.distance = distance; }
 }

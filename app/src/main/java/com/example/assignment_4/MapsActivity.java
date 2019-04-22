@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -83,8 +85,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public ParkingApi parkingApi;
     public Parkings parkings;
     public static List<ParkingPojo> parkingPojoList = new ArrayList<>();
+    public static List<ParkingPojo> transferData = new ArrayList<>();
 
     Bitmap markerIcon;
+    Button payOrReserve;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +108,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             String minuteCharge = parkingPojoList.get(i).getCostPerMinute();
         }*/
 
-        Toast.makeText(this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();
 
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -191,7 +195,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     /*Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
                     Toast.makeText(MapsActivity.this, "Size: " + parkingPojoList.size(), Toast.LENGTH_SHORT).show();*/
                     hiddenToolbar = true;
-                    Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
                 }else if(v.getVisibility() == View.INVISIBLE){
                     v.setVisibility(View.VISIBLE);
                     Log.d(TAG, "onClick: Visibility changed");
@@ -204,7 +208,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     slideDown(linearLayout);
                     slideDown(ivSearch);
                     hiddenToolbar = false;
-                    Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MapsActivity.this, "HiddenToolbar: " + hiddenToolbar, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -278,7 +282,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setMapLongClick(final GoogleMap map) {
-        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+        /*map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 String snippet = String.format(Locale.getDefault(),
@@ -290,7 +294,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .title(getString(R.string.dropped_pin))
                             .snippet(snippet));
             }
-        });
+        });*/
     }
 
     private void setPoiClick(final GoogleMap map) {
@@ -351,6 +355,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     .replace(R.id.fragment_container,
                                             streetViewFragment)
                                     .addToBackStack(null).commit();
+                        }else{
+                            //Toast.makeText(MapsActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+                            String name = marker.getTitle();
+                             //parkingPojo = null;
+                            for(int i = 0; i < transferData.size(); i++){
+                                if(transferData.get(i).getName().equals(name)){
+                                    ParkingPojo parkingPojo = transferData.get(i);
+                                    //Toast.makeText(MapsActivity.this, "Clicked: " + transferData.get(i).getDistance(), Toast.LENGTH_SHORT).show();
+
+                                    Intent intent = new Intent();
+                                    intent.setClass(MapsActivity.this, ParkingInfo.class);
+
+                                    intent.putExtra("parking", transferData.get(i));
+                                    intent.putExtra("name", parkingPojo.getName());
+                                    intent.putExtra("address", parkingPojo.getSimpleAddress());
+                                    intent.putExtra("spot", parkingPojo.getOpenSpot());
+                                    intent.putExtra("cost", parkingPojo.getCostPerMinute());
+                                    intent.putExtra("distance", parkingPojo.getDistance());
+
+                                    startActivity(intent);
+
+                                    break;
+                                }
+                            }
                         }
                     }
                 });
@@ -370,7 +398,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onResponse(Call<List<ParkingPojo>> call, Response<List<ParkingPojo>> response) {
                 parkingPojoList = new ArrayList<>(response.body());
-                Toast.makeText(MapsActivity.this, "Size: " + response.body().size(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MapsActivity.this, "Size: " + response.body().size(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -410,6 +438,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             TextView tvSpot = contentView.findViewById(R.id.tv_spot);
             tvSpot.setText(snippetArray[1]); //"" + parkingPojo.openSpot
+            Log.d(TAG, "setInfoForParking: " + snippet);
 
             TextView tvCost = contentView.findViewById(R.id.tv_cost);
             tvCost.setText(snippetArray[2] + "/min"); //parkingPojo.getCostPerMinute()
@@ -418,6 +447,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(snippetArray[3] != null) distance = Double.parseDouble(snippetArray[3]);
             TextView tvDistance = contentView.findViewById(R.id.tv_distance);
             tvDistance.setText(new DecimalFormat("##.##").format(distance) + " miles"); //distanceInMiles
+
+            /*payOrReserve = contentView.findViewById(R.id.btn_pay_reserve);
+            payOrReserve.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MapsActivity.this, "Pay btn was clicked.", Toast.LENGTH_SHORT).show();
+                }
+            });*/
+
+            //GoogleMap.OnInfoWindowClickListener
+
+            /*contentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MapsActivity.this, "Info window was clicked", Toast.LENGTH_SHORT).show();
+                    Log.d("InfoWindow: ", "Clicked the info window");
+                }
+            });*/
         }
 
         @Override
@@ -435,8 +482,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public double getDistance(LatLng position, ParkingPojo parkingPojo){
-        position = new LatLng(33.756898,-84.392066);
+    public double getDistance(ParkingPojo parkingPojo){
+        LatLng position = new LatLng(33.756898,-84.392066);
         Location location = new Location("");
         location.setLatitude(position.latitude);
         location.setLongitude(position.longitude);
@@ -460,27 +507,55 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng parking = new LatLng(Double.parseDouble(parkingPojoList.get(i).getLat()),
                                         Double.parseDouble(parkingPojoList.get(i).getLng()));
             Address parkingAddress = getParkingAddress(parkingPojo);
-            String snippet = "" + parkingAddress.getAddressLine(0) + "-" +
-                                parkingPojoList.get(i).openSpot + "-" +
-                                parkingPojoList.get(i).getCostPerMinute() + "-" +
-                                getDistance(new LatLng(33.756898,-84.392066), parkingPojoList.get(i));
+            String addressLine = parkingAddress.getAddressLine(0);
+            String simpleAddress = addressLine.substring(0, addressLine.length()-5);
+            Log.d(TAG, "createParkingMarkers: " + parkingPojoList.get(i).openSpot);
+            parkingPojoList.get(i).distance = "" + getDistance(parkingPojoList.get(i));
+            parkingPojo.setDistance(new DecimalFormat("##.##").format(getDistance(parkingPojoList.get(i))));
+            parkingPojoList.get(i).setAddress(parkingAddress);
+            parkingPojo.setAddress(parkingAddress);
+            parkingPojo.setSimpleAddress(simpleAddress);
+
+            Log.d("OpenSpot", "createParkingMarkers: " + parkingPojoList.get(i).openSpot);
+            if(parkingPojoList.get(i).openSpot == 0){
+                parkingPojoList.get(i).setOpenSpot(5);
+            }
+            //parkingPojo.setOpenSpot(parkingPojoList.get(i).openSpot);
+
+            Log.d(TAG + " marker", "createParkingMarkers: " + parkingPojo);
+            String snippet = "" + simpleAddress + "-" +
+                                parkingPojo.getOpenSpot() + "-" + //parkingPojoList.get(i)
+                                parkingPojo.getCostPerMinute() + "-" +
+                                parkingPojo.getDistance();
                             //+ "\n" + "Cost: " + parkingPojoList.get(i).getCostPerMinute(); //"Lat: " + parking.latitude + ", Lng: " + parking.longitude
+            transferData.add(parkingPojo);
             Marker marker = map.addMarker(new MarkerOptions()
                                             .position(parking)
                                             .title(parkingPojo.getName())
                                             .icon(BitmapDescriptorFactory.fromBitmap(markerIcon))
                                             .snippet(snippet));
+
             if(snippet != null){
                 map.setInfoWindowAdapter(new CustomInfoWindowAdapter()); //parkingPojoList.get(i)
             }
 
+            /*if(!marker.getTag().equals("poi")) {
+                map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+                        Toast.makeText(MapsActivity.this, "Title clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }*/
         }
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
 
-        Toast.makeText(this, "Marker was clicked", Toast.LENGTH_SHORT).show();
+        //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+
+        //Toast.makeText(this, "Marker was clicked", Toast.LENGTH_SHORT).show();
 
         return true;
     }
